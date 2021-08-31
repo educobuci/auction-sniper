@@ -1,7 +1,7 @@
 const colors = require('tailwindcss/colors');
 
 module.exports = {
-  // mode: 'jit',
+  mode: 'jit',
   purge: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
@@ -20,7 +20,7 @@ module.exports = {
       },
       colors: {
         primary: colors.blue,
-        gray: colors.coolGray,
+        gray: colors.gray,
         gridTemplateColumns: {
           'fill': 'repeat(auto-fill, minmax(0, 1fr))',
         },
