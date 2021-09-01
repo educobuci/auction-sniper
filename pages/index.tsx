@@ -21,7 +21,7 @@ export default function Home({ itemId }: { itemId: string }) {
     })
   }, [itemId])
 
-  useEffect(() => { connectPusher() }, [])
+  useEffect(() => { connectPusher() }, [connectPusher])
 
   return <div className="h-screen dark:bg-gray-900 dark:text-white p-4">
     <h1 className="text-3xl">Auction Sniper: { itemId }</h1>

@@ -3,7 +3,7 @@ import Pusher, { Channel } from 'pusher-js'
 const PUSHER_KEY = 'e42e4c2ccfd7b0128b0c'
 const PUSHER_EVENT = 'client-message'
 const PUSHER_CLUSTER = 'mt1'
-const PUSHER_AUTH_ENDPOINT = 'http://localhost:3000/api/pusher/auth'
+const PUSHER_AUTH_ENDPOINT = 'http://localhost:9000/api/pusher/auth'
 const PUSHER_SUBSCRIPTION_SUCCEEDED = 'pusher:subscription_succeeded'
 
 export default class FakeAuctionServer {

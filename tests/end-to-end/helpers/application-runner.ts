@@ -5,7 +5,7 @@ import FakeAuctionServer from './fake-auction-server'
 
 const SNIPER_ID = 'sniper'
 const SNIPER_PASSWORD = 'sniper'
-const APP_HOST = 'http://localhost:3000'
+const APP_HOST = 'http://localhost:9000'
 
 export default class ApplicationRunner {
   private driver: AuctionSniperDriver
