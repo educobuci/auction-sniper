@@ -6,9 +6,9 @@ const application = new ApplicationRunner()
 
 test('Sniper joins auction until auction closes', async () => {
   auction.startSellingItem()
-  await application.startBiddingIn(auction)
+  application.startBiddingIn(auction)
   await auction.hasReceivedJoinRequestFromSniper()
-  await auction.announceClosed()
+  auction.announceClosed()
   await application.showsSniperHasLostAuction()
 })
 
