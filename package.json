@@ -7,9 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "next build && jest",
+    "test": "jest",
     "test:unit": "jest -c jest.unit.config.js",
-    "test:e2e": "next build && jest -c jest.end-to-end.config.js"
+    "test:e2e": "jest -c jest.end-to-end.config.js"
   },
   "dependencies": {
     "next": "11.1.1",
