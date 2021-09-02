@@ -2,14 +2,14 @@ import { AuctionStatus } from 'lib/AuctionStatus'
 import { Page } from 'puppeteer'
 
 export default class AuctionSniperDriver {
-  page: Page
+  appPage: Page
 
-  constructor(page: Page) {
-    this.page = page
+  constructor(appPage: Page) {
+    this.appPage = appPage
   }
 
   async showsSniperStatus(status: AuctionStatus) {
-    const el = await page.$x(`//div[contains(text(), '${status}')]`)
+    const el = await this.appPage.$x(`//div[contains(text(), '${status}')]`)
     expect(el.length).toEqual(1)
   }
 }

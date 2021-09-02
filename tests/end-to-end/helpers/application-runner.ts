@@ -1,21 +1,21 @@
 import 'expect-puppeteer'
+import { Page } from 'puppeteer'
 import { AuctionStatus } from '../../../lib/AuctionStatus'
 import AuctionSniperDriver from './auction-sniper-driver'
 import FakeAuctionServer from './fake-auction-server'
 
-const SNIPER_ID = 'sniper'
-const SNIPER_PASSWORD = 'sniper'
 const APP_HOST = 'http://localhost:9000'
 
 export default class ApplicationRunner {
+  private appPage: Page
   private driver: AuctionSniperDriver
 
   async startBiddingIn(auction: FakeAuctionServer) {
+    this.appPage = await browser.newPage()
     const itemId = auction.getItemId()
     const url = `${APP_HOST}/?item-id=${itemId}`
-    await page.authenticate({ username: SNIPER_ID, password: SNIPER_PASSWORD })
-    await page.goto(url)
-    this.driver = new AuctionSniperDriver(page)
+    await this.appPage.goto(url)
+    this.driver = new AuctionSniperDriver(this.appPage)
     await this.driver.showsSniperStatus(AuctionStatus.Joining)
   }
 
@@ -23,7 +23,8 @@ export default class ApplicationRunner {
     await this.driver.showsSniperStatus(AuctionStatus.Lost)
   }
 
-  stop() {
+  async stop() {
     this.driver = null
+    await this.appPage.close()
   }
 }

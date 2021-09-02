@@ -50,8 +50,8 @@ export default class FakeAuctionServer {
   }
 
   stop() {
-    this.channel.unbind_all()
-    this.channel.disconnect()
+    this.channel?.unbind_all()
+    this.channel?.disconnect()
     this.pusher.disconnect()
   }
 }
