@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest",
+    "test:unit": "jest -c jest.unit.config.js",
+    "test:e2e": "jest -c jest.end-to-end.config.js"
   },
   "dependencies": {
     "next": "11.1.1",
