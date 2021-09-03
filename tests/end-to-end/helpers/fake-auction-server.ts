@@ -11,6 +11,7 @@ export default class FakeAuctionServer {
   pusher: Pusher
   channel: Channel
   messages: Array<any>
+  isSubscribed: Promise<Boolean>
 
   constructor(itemId: string) {
     this.itemId = itemId
@@ -22,36 +23,39 @@ export default class FakeAuctionServer {
     })
   }
 
-  startSellingItem() {
+  async startSellingItem() {
     const channelName = `private-${this.itemId}`
     this.channel = this.pusher.subscribe(channelName)
+    return new Promise<Boolean>(resolve => this.channel.bind(PUSHER_SUBSCRIPTION_SUCCEEDED, resolve))
   }
 
   async hasReceivedJoinRequestFromSniper() {
-    const subscribe = new Promise<void>((resolve) => {
-      this.channel.bind(PUSHER_SUBSCRIPTION_SUCCEEDED, resolve)
-    })
-    const messageListner = new Promise<void>((resolve) => {
-      this.channel.bind(PUSHER_EVENT, (data: any) => {
-        this.messages.push(data)
-        resolve(data)
-      })
-    })
-    await subscribe
-    return expect(messageListner).resolves.not.toThrow()
+    await expect(this.waitForEvent('client-join')).resolves.not.toThrow()
   }
 
   async announceClosed() {
-    this.channel.trigger(PUSHER_EVENT, {})
+    this.channel.trigger('client-close', {})
   }
 
   getItemId() {
     return this.itemId
   }
 
+  reportPrice(currentPrice: number, increment: number, bidder: string) {
+    this.channel.trigger('client-price', { currentPrice, increment, bidder })
+  }
+
+  async hasReceivedBid(price: number, sniperId: string) {
+    await expect(this.waitForEvent('client-bid')).resolves.toEqual({ price, sniperId })
+  }
+
   stop() {
     this.channel?.unbind_all()
     this.channel?.disconnect()
     this.pusher.disconnect()
+  }
+
+  private async waitForEvent(type: string): Promise<any> {
+    return new Promise<any>(resolve => this.channel.bind(type, resolve))
   }
 }
