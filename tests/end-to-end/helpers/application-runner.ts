@@ -1,21 +1,22 @@
 import 'expect-puppeteer'
-import { Page } from 'puppeteer'
-import { AuctionStatus } from '../../../lib/AuctionStatus'
+import { AuctionStatus } from '../../../library/AuctionStatus'
 import AuctionSniperDriver from './auction-sniper-driver'
 import FakeAuctionServer from './fake-auction-server'
-
-const APP_HOST = 'http://localhost:9000'
+import config from './config'
 
 export default class ApplicationRunner {
-  private appPage: Page
+  static readonly SNIPER_ID = 'sniper'
   private driver: AuctionSniperDriver
 
+  constructor() {
+    this.driver = new AuctionSniperDriver(page)
+  }
+  
   async startBiddingIn(auction: FakeAuctionServer) {
-    this.appPage = await browser.newPage()
+    page.on('console', (message) => console.log(message?.text()))
     const itemId = auction.getItemId()
-    const url = `${APP_HOST}/?item-id=${itemId}`
-    await this.appPage.goto(url)
-    this.driver = new AuctionSniperDriver(this.appPage)
+    const url = `${config.host}/?item-id=${itemId}`
+    await page.goto(url)
     await this.driver.showsSniperStatus(AuctionStatus.Joining)
   }
 
@@ -23,8 +24,12 @@ export default class ApplicationRunner {
     await this.driver.showsSniperStatus(AuctionStatus.Lost)
   }
 
+  async hasShownIsBidding() {
+    await this.driver.showsSniperStatus(AuctionStatus.Bidding)
+  }
+
   async stop() {
     this.driver = null
-    await this.appPage.close()
+    await jestPuppeteer.resetPage()
   }
 }
