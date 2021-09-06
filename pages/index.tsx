@@ -1,17 +1,20 @@
-import { AuctionStatus } from 'library/AuctionStatus'
+import { AuctionStatus } from 'library/auction-status'
 import { useCallback, useEffect, useState } from 'react'
-import { dispatch, on, subscribe } from 'library/pusher/pusher-service'
+import { subscribeToChannel } from 'library/pusher/pusher-service'
+import AuctionEventTranslator from 'library/auction-event-translator'
+import AuctionEventListener from 'library/auction-event-listener'
 
 export default function Home({ itemId }: { itemId: string }) {
   const [status, setStatus] = useState(AuctionStatus.Joining)
 
   const connect = useCallback(async () => {
-    await subscribe(itemId)
-    dispatch('join', { bidder: 'sniper' })
-    on('close', () => setStatus(AuctionStatus.Lost))
-    on('price', () => {
-      setStatus(AuctionStatus.Bidding)
-    })
+    const listener: AuctionEventListener = {
+      auctionClosed: () => setStatus(AuctionStatus.Lost),
+      currentPrice: () => { }
+    }
+    const translator = new AuctionEventTranslator(listener)
+    const channel = await subscribeToChannel(`private-${itemId}`, translator)
+    channel.trigger('client-join', {})
   }, [itemId])
 
   useEffect(() => { connect() }, [ connect ])

@@ -2,7 +2,6 @@ import Pusher, { Channel } from 'pusher-js'
 import config from './config'
 
 const PUSHER_KEY = 'e42e4c2ccfd7b0128b0c'
-const PUSHER_EVENT = 'client-message'
 const PUSHER_CLUSTER = 'mt1'
 const PUSHER_AUTH_ENDPOINT = `${config.host}/api/pusher/auth`
 const PUSHER_SUBSCRIPTION_SUCCEEDED = 'pusher:subscription_succeeded'
@@ -29,9 +28,9 @@ export default class FakeAuctionServer {
     await new Promise<Boolean>(resolve => this.channel.bind(PUSHER_SUBSCRIPTION_SUCCEEDED, resolve))
   }
 
-  async hasReceivedJoinRequestFromSniper(sniperId: string) {
+  async hasReceivedJoinRequestFromSniper() {
     const join = await this.waitForEvent('client-join')
-    expect(join.bidder).toEqual(sniperId)
+    expect(join).not.toBeNull()
   }
 
   announceClosed() {
@@ -46,8 +45,8 @@ export default class FakeAuctionServer {
     this.channel.trigger('client-price', { currentPrice, increment, bidder })
   }
 
-  async hasReceivedBid(price: number, bidder: string) {
-    await expect(this.waitForEvent('client-bid')).resolves.toEqual({ price, bidder })
+  async hasReceivedBid(price: number) {
+    await expect(this.waitForEvent('client-bid')).resolves.toEqual({ price })
   }
 
   stop() {
