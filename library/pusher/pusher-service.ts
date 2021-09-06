@@ -8,6 +8,7 @@ const AUTH_ENDPOINT = '/api/pusher/auth'
 let channel: Channel
 
 export const subscribe = async (itemId: string) => {
+  Pusher.logToConsole = true
   const channelName = `private-${itemId}`
   const pusher = new Pusher(pusherApiKey, {
     authEndpoint: AUTH_ENDPOINT,

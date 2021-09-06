@@ -14,17 +14,17 @@ beforeEach(() => {
 test('Sniper joins auction until auction closes', async () => {
   await auction.startSellingItem()
   await application.startBiddingIn(auction)
-  await auction.hasReceivedJoinRequestFromSniper()
+  await auction.hasReceivedJoinRequestFromSniper(ApplicationRunner.SNIPER_ID)
   auction.announceClosed()
   await application.showsSniperHasLostAuction()
 })
 
-test.skip('Sniper makes a higher bid but loses', async () => {
+test('Sniper makes a higher bid but loses', async () => {
   await auction.startSellingItem()
   await application.startBiddingIn(auction)
-  await auction.hasReceivedJoinRequestFromSniper()
+  await auction.hasReceivedJoinRequestFromSniper(ApplicationRunner.SNIPER_ID)
   auction.reportPrice(1000, 98, 'other bidder')
-  // await application.hasShownIsBidding()
+  await application.hasShownIsBidding()
   // await auction.hasReceivedBid(1098, ApplicationRunner.SNIPER_ID)
   // auction.announceClosed()
   // await application.showsSniperHasLostAuction()
