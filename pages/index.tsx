@@ -7,9 +7,11 @@ export default function Home({ itemId }: { itemId: string }) {
 
   const connect = useCallback(async () => {
     await subscribe(itemId)
-    dispatch('join', { id: 'sniper' })
+    dispatch('join', { bidder: 'sniper' })
     on('close', () => setStatus(AuctionStatus.Lost))
-    on('price', () => setStatus(AuctionStatus.Bidding))
+    on('price', () => {
+      setStatus(AuctionStatus.Bidding)
+    })
   }, [itemId])
 
   useEffect(() => { connect() }, [ connect ])

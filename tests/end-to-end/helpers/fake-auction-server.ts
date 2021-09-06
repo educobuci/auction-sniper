@@ -31,7 +31,7 @@ export default class FakeAuctionServer {
 
   async hasReceivedJoinRequestFromSniper(sniperId: string) {
     const join = await this.waitForEvent('client-join')
-    expect(join.id).toEqual(sniperId)
+    expect(join.bidder).toEqual(sniperId)
   }
 
   announceClosed() {
@@ -46,8 +46,8 @@ export default class FakeAuctionServer {
     this.channel.trigger('client-price', { currentPrice, increment, bidder })
   }
 
-  async hasReceivedBid(price: number, sniperId: string) {
-    await expect(this.waitForEvent('client-bid')).resolves.toEqual({ price, sniperId })
+  async hasReceivedBid(price: number, bidder: string) {
+    await expect(this.waitForEvent('client-bid')).resolves.toEqual({ price, bidder })
   }
 
   stop() {
