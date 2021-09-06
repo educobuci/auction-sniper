@@ -29,8 +29,9 @@ export default class FakeAuctionServer {
     await new Promise<Boolean>(resolve => this.channel.bind(PUSHER_SUBSCRIPTION_SUCCEEDED, resolve))
   }
 
-  async hasReceivedJoinRequestFromSniper() {
-    await expect(this.waitForEvent('client-join')).resolves.not.toThrow()
+  async hasReceivedJoinRequestFromSniper(sniperId: string) {
+    const join = await this.waitForEvent('client-join')
+    expect(join.id).toEqual(sniperId)
   }
 
   announceClosed() {
