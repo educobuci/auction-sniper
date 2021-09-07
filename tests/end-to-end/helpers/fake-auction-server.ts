@@ -6,6 +6,8 @@ const PUSHER_CLUSTER = 'mt1'
 const PUSHER_AUTH_ENDPOINT = `${config.host}/api/pusher/auth`
 const PUSHER_SUBSCRIPTION_SUCCEEDED = 'pusher:subscription_succeeded'
 
+const EVENT_TIMEOUT = 3000
+
 export default class FakeAuctionServer {
   itemId: string
   pusher: Pusher
@@ -46,7 +48,7 @@ export default class FakeAuctionServer {
   }
 
   async hasReceivedBid(price: number) {
-    await expect(this.waitForEvent('client-bid')).resolves.toEqual({ price })
+    expect(await this.waitForEvent(`client-bid`)).toEqual(price)
   }
 
   stop() {
@@ -55,7 +57,17 @@ export default class FakeAuctionServer {
     this.pusher.disconnect()
   }
 
-  private async waitForEvent(type: string): Promise<any> {
-    return new Promise<any>(resolve => this.channel.bind(type, resolve))
+  private async waitForEvent(name: string): Promise<any> {
+    const value = await new Promise<any>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        this.channel.unbind(name)
+        reject(`Timeout: no '${name}' event has been received`)
+      }, EVENT_TIMEOUT)
+      this.channel.bind(name, (data: any) => {
+        clearTimeout(timeout)
+        resolve(data)
+      })
+    })
+    return value
   }
 }
