@@ -10,7 +10,7 @@ export default function Home({ itemId }: { itemId: string }) {
   const [status, setStatus] = useState(AuctionStatus.Joining)
 
   const connect = useCallback(async () => {
-    const channel = subscribeToChannel(`private-${itemId}`)
+    const channel = await subscribeToChannel(`private-${itemId}`)
     const sniperListener: SniperListener = {
       sniperLost: () => setStatus(AuctionStatus.Lost),
       sniperBidding: () => setStatus(AuctionStatus.Bidding)
@@ -22,7 +22,7 @@ export default function Home({ itemId }: { itemId: string }) {
     }
     const sniper = new AuctionSniper(auction, sniperListener)
     const translator = new AuctionEventTranslator(sniper)
-    await setEventTranslator(channel, translator)
+    setEventTranslator(translator)
     channel.trigger('client-join', {})
   }, [itemId])
 
