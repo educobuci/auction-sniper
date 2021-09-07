@@ -17,7 +17,7 @@ export default class FakeAuctionServer {
   constructor(itemId: string) {
     this.itemId = itemId
     this.messages = []
-    Pusher.logToConsole = true
+    Pusher.logToConsole = false
     this.pusher = new Pusher(PUSHER_KEY, {
       authEndpoint: PUSHER_AUTH_ENDPOINT,
       cluster: PUSHER_CLUSTER

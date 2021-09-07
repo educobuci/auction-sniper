@@ -6,8 +6,6 @@ const pusherApiKey = process.env.NEXT_PUBLIC_PUSHER_APP_KEY
 const SUBSCRIBED = 'pusher:subscription_succeeded'
 const AUTH_ENDPOINT = '/api/pusher/auth'
 
-
-
 export const subscribeToChannel = (channelName: string, ) => {
   Pusher.logToConsole = false
   const pusher = new Pusher(pusherApiKey, {
