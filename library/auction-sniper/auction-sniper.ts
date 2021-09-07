@@ -12,8 +12,8 @@ export default class AuctionSniper implements AuctionEventListener {
   }
 
   currentPrice(price: number, increment: number): void {
-    this.auction.bid(price + increment)
     this.sniperListener.sniperBidding()
+    this.auction.bid(price + increment)
   }
 
   auctionClosed() {

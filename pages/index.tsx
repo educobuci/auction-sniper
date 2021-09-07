@@ -1,6 +1,6 @@
 import { AuctionStatus } from 'library/auction-status'
 import { useCallback, useEffect, useState } from 'react'
-import { subscribeToChannel } from 'library/pusher/pusher-service'
+import { setEventTranslator, subscribeToChannel } from 'library/pusher/pusher-service'
 import AuctionEventTranslator from 'library/auction-event-translator'
 import AuctionSniper from 'library/auction-sniper/auction-sniper'
 import { SniperListener } from 'library/auction-sniper/ports'
@@ -10,18 +10,19 @@ export default function Home({ itemId }: { itemId: string }) {
   const [status, setStatus] = useState(AuctionStatus.Joining)
 
   const connect = useCallback(async () => {
+    const channel = subscribeToChannel(`private-${itemId}`)
     const sniperListener: SniperListener = {
       sniperLost: () => setStatus(AuctionStatus.Lost),
-      sniperBidding: () => setStatus(AuctionStatus.Bidding),
+      sniperBidding: () => setStatus(AuctionStatus.Bidding)
     }
     const auction: Auction = {
       bid(amount: number) {
-
+        channel.trigger('client-bid', { amount })
       }
     }
     const sniper = new AuctionSniper(auction, sniperListener)
     const translator = new AuctionEventTranslator(sniper)
-    const channel = await subscribeToChannel(`private-${itemId}`, translator)
+    await setEventTranslator(channel, translator)
     channel.trigger('client-join', {})
   }, [itemId])
 

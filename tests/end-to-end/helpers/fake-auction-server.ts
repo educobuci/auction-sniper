@@ -17,7 +17,7 @@ export default class FakeAuctionServer {
   constructor(itemId: string) {
     this.itemId = itemId
     this.messages = []
-    Pusher.logToConsole = false
+    Pusher.logToConsole = true
     this.pusher = new Pusher(PUSHER_KEY, {
       authEndpoint: PUSHER_AUTH_ENDPOINT,
       cluster: PUSHER_CLUSTER
@@ -47,8 +47,8 @@ export default class FakeAuctionServer {
     this.channel.trigger('client-price', { currentPrice, increment, bidder })
   }
 
-  async hasReceivedBid(price: number) {
-    expect(await this.waitForEvent(`client-bid`)).toEqual(price)
+  async hasReceivedBid(amount: number) {
+    expect(await this.waitForEvent('client-bid')).toEqual({ amount })
   }
 
   stop() {
@@ -61,9 +61,10 @@ export default class FakeAuctionServer {
     const value = await new Promise<any>((resolve, reject) => {
       const timeout = setTimeout(() => {
         this.channel.unbind(name)
-        reject(`Timeout: no '${name}' event has been received`)
+        reject(`Timeout: '${name}' event has not been received`)
       }, EVENT_TIMEOUT)
       this.channel.bind(name, (data: any) => {
+        this.channel.unbind(name)
         clearTimeout(timeout)
         resolve(data)
       })
