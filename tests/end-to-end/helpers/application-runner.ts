@@ -16,7 +16,7 @@ export default class ApplicationRunner {
     page.on('console', (message) => console.log(message?.text()))
     const itemId = auction.getItemId()
     const url = `${config.host}/?item-id=${itemId}`
-    await page.goto(url)
+    page.goto(url)
     await this.driver.showsSniperStatus(AuctionStatus.Joining)
   }
 
