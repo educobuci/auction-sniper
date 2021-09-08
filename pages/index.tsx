@@ -1,10 +1,7 @@
-import { AuctionStatus } from 'library/auction-status'
 import { useCallback, useEffect, useState } from 'react'
-import { setEventTranslator, subscribeToChannel } from 'library/pusher/pusher-service'
-import AuctionEventTranslator from 'library/auction-event-translator'
-import AuctionSniper from 'library/auction-sniper/auction-sniper'
-import SniperStateDisplayer from 'library/sniper-state-displayer'
-import PusherAuction from 'library/pusher/pusher-auction'
+import { PusherAuction, AuctionEventTranslator, setEventTranslator, subscribeToChannel } from 'library/pusher'
+import { AuctionSniper, AuctionStatus } from 'library/core'
+import SniperStateDisplayer from 'library/presentation/sniper-state-displayer'
 
 export default function Home({ itemId }: { itemId: string }) {
   const [status, setStatus] = useState(AuctionStatus.Joining)

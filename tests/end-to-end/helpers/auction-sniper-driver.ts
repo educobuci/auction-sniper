@@ -1,4 +1,4 @@
-import { AuctionStatus } from 'library/auction-status'
+import { AuctionStatus } from 'library/core'
 import { Page } from 'puppeteer'
 
 const TIMEOUT = 3000

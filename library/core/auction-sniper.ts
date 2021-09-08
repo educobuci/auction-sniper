@@ -1,8 +1,7 @@
-import AuctionEventListener from 'library/auction-event-listener'
-import { Auction } from 'library/auction/ports'
+import { Auction, AuctionEventListener } from 'library/core'
 import { SniperListener } from './ports'
 
-export default class AuctionSniper implements AuctionEventListener {
+export class AuctionSniper implements AuctionEventListener {
   auction: Auction
   sniperListener: SniperListener
 

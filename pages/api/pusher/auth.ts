@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import Pusher from 'pusher'
-import { config } from 'library/config'
+import { config } from 'config'
 
 const auth = (req: NextApiRequest, res: NextApiResponse) => {
   const pusher = new Pusher({ ...config })

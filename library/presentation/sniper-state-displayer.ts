@@ -1,5 +1,4 @@
-import { SniperListener } from './auction-sniper/ports'
-import { AuctionStatus } from './auction-status'
+import { AuctionStatus, SniperListener } from '../core'
 
 export default class SniperStateDisplayer implements SniperListener {
   ui: SniperUI

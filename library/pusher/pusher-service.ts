@@ -1,6 +1,6 @@
 import Pusher, { Channel } from 'pusher-js'
-import { config } from 'library/config'
-import AuctionEventTranslator from 'library/auction-event-translator'
+import { config } from '../../config'
+import { AuctionEventTranslator } from './auction-event-translator'
 
 const pusherApiKey = process.env.NEXT_PUBLIC_PUSHER_APP_KEY
 const SUBSCRIBED = 'pusher:subscription_succeeded'

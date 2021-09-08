@@ -1,5 +1,5 @@
 import 'expect-puppeteer'
-import { AuctionStatus } from '../../../library/auction-status'
+import { AuctionStatus } from '../../../library/core/auction-status'
 import AuctionSniperDriver from './auction-sniper-driver'
 import FakeAuctionServer from './fake-auction-server'
 import config from './config'

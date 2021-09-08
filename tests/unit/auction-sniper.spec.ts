@@ -1,8 +1,6 @@
 import { mock, MockProxy } from 'jest-mock-extended'
-import { Auction } from '../../library/auction/ports'
-import AuctionSniper from '../../library/auction-sniper/auction-sniper'
-import { SniperListener } from '../../library/auction-sniper/ports'
-
+import { Auction } from '../../library/core/auction'
+import { AuctionSniper, SniperListener } from '../../library/core'
 
 describe('Auction sniper', () => {
   let auction: MockProxy<Auction>

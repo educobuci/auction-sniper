@@ -1,7 +1,7 @@
-import { Auction } from 'library/auction/ports'
+import { Auction } from 'library/core'
 import { Channel } from 'pusher-js'
 
-export default class PusherAuction implements Auction {
+export class PusherAuction implements Auction {
   channel: Channel
 
   constructor(channel: Channel) {

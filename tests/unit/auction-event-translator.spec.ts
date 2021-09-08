@@ -1,7 +1,7 @@
 import { mock, MockProxy } from 'jest-mock-extended'
 
-import AuctionEventTranslator from '../../library/auction-event-translator'
-import AuctionEventListener from '../../library/auction-event-listener'
+import { AuctionEventTranslator } from '../../library/pusher'
+import { AuctionEventListener } from '../../library/core'
 
 describe('Auction event translator', () => {
   var listener: MockProxy<AuctionEventListener>

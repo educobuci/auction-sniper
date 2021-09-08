@@ -1,6 +1,6 @@
-import AuctionEventListener from './auction-event-listener'
+import { AuctionEventListener } from '../core'
 
-export default class AuctionEventTranslator {
+export class AuctionEventTranslator {
   private listener: AuctionEventListener
 
   constructor(listener: AuctionEventListener) {
