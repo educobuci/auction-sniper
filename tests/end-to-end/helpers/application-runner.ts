@@ -1,5 +1,5 @@
 import 'expect-puppeteer'
-import { AuctionStatus } from '../../../library/core/auction-status'
+import { AuctionStatus } from '../../../library/core'
 import AuctionSniperDriver from './auction-sniper-driver'
 import FakeAuctionServer from './fake-auction-server'
 import config from './config'
@@ -15,7 +15,7 @@ export default class ApplicationRunner {
   async startBiddingIn(auction: FakeAuctionServer) {
     page.on('console', (message) => console.log(message?.text()))
     const itemId = auction.getItemId()
-    const url = `${config.host}/?item-id=${itemId}`
+    const url = `${config.host}/?item-id=${itemId}&sniper-id=${ApplicationRunner.SNIPER_ID}`
     page.goto(url)
     await this.driver.showsSniperStatus(AuctionStatus.Joining)
   }
@@ -26,6 +26,14 @@ export default class ApplicationRunner {
 
   async hasShownIsBidding() {
     await this.driver.showsSniperStatus(AuctionStatus.Bidding)
+  }
+
+  async hasShownSniperIsWinning() {
+    await this.driver.showsSniperStatus(AuctionStatus.Winning)
+  }
+
+  async showsSniperHasWonAuction() {
+    await this.driver.showsSniperStatus(AuctionStatus.Won)
   }
 
   async stop() {

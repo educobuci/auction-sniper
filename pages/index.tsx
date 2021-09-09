@@ -3,7 +3,7 @@ import { PusherAuction, AuctionEventTranslator, setEventTranslator, subscribeToC
 import { AuctionSniper, AuctionStatus } from 'library/core'
 import SniperStateDisplayer from 'library/presentation/sniper-state-displayer'
 
-export default function Home({ itemId }: { itemId: string }) {
+export default function Home({ itemId, sniperId }: { itemId: string, sniperId: string }) {
   const [status, setStatus] = useState(AuctionStatus.Joining)
 
   const joinAuction = useCallback(async () => {
@@ -11,9 +11,9 @@ export default function Home({ itemId }: { itemId: string }) {
     const auction = new PusherAuction(channel)
     const displayer = new SniperStateDisplayer({ showStatus: setStatus })
     const sniper = new AuctionSniper(auction, displayer)
-    setEventTranslator(new AuctionEventTranslator(sniper))
+    setEventTranslator(new AuctionEventTranslator(sniperId, sniper))
     auction.join()
-  }, [itemId])
+  }, [itemId, sniperId])
 
   useEffect(() => { joinAuction() }, [ joinAuction ])
 
@@ -25,6 +25,9 @@ export default function Home({ itemId }: { itemId: string }) {
 
 export function getServerSideProps({ query }) {
   return {
-    props: { itemId: query['item-id'] }
+    props: {
+      itemId: query['item-id'],
+      sniperId: query['sniper-id']
+    }
   }
 }

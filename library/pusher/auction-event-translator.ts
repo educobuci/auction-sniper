@@ -1,10 +1,12 @@
-import { AuctionEventListener } from '../core'
+import { AuctionEventListener, PriceSource } from '../core'
 
 export class AuctionEventTranslator {
   private listener: AuctionEventListener
+  private sniperId: string
 
-  constructor(listener: AuctionEventListener) {
+  constructor(sniperId: string, listener: AuctionEventListener) {
     this.listener = listener
+    this.sniperId = sniperId
   }
 
   processEvent(eventName: string, eventData: any): void {
@@ -14,7 +16,9 @@ export class AuctionEventTranslator {
         break
       }
       case 'client-price': {
-        this.listener.currentPrice(eventData.currentPrice, eventData.increment)
+        const { currentPrice, increment, bidder } = eventData
+        const source = this.sniperId === bidder ? PriceSource.FromSniper : PriceSource.FromOtherBidder
+        this.listener.currentPrice(currentPrice, increment, source)
         break;
       }
     }

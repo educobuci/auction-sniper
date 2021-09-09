@@ -7,12 +7,20 @@ export default class SniperStateDisplayer implements SniperListener {
     this.ui = ui
   }
 
+  sniperWon(): void {
+    this.ui.showStatus(AuctionStatus.Won)
+  }
+
   sniperLost(): void {
     this.ui.showStatus(AuctionStatus.Lost)
   }
 
   sniperBidding(): void {
     this.ui.showStatus(AuctionStatus.Bidding)
+  }
+
+  sniperWinning(): void {
+    this.ui.showStatus(AuctionStatus.Winning)
   }
 }
 
