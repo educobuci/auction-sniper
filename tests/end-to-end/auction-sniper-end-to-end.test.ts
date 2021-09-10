@@ -43,13 +43,13 @@ test('Sniper wins auction by bidding higher', async () => {
   await auction.hasReceivedJoinRequestFromSniper()
 
   auction.reportPrice(1000, 98, 'other bidder')
-  await auction.hasReceivedBid(1098)
+  await application.hasShownSniperIsBidding(1000, 1098)
 
-  auction.reportPrice(1098, 87, ApplicationRunner.SNIPER_ID)
-  await application.hasShownSniperIsWinning()
+  auction.reportPrice(1098, 98, ApplicationRunner.SNIPER_ID)
+  await application.hasShownSniperIsWinning(1098)
 
-  auction.announceClosed()
-  await application.showsSniperHasWonAuction()
+  // auction.announceClosed()
+  // await application.showsSniperHasWonAuction(1098)
 })
 
 afterEach(async () => {

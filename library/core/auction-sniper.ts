@@ -5,18 +5,21 @@ export class AuctionSniper implements AuctionEventListener {
   private auction: Auction
   private sniperListener: SniperListener
   private isWinning = false
+  private itemId: string
 
-  constructor(auction: Auction, listener: SniperListener) {
+  constructor(itemId: string, auction: Auction, listener: SniperListener) {
     this.auction = auction
     this.sniperListener = listener
+    this.itemId = itemId
   }
 
   currentPrice(price: number, increment: number, source: PriceSource): void {
     this.isWinning = source === PriceSource.FromSniper
+    const bid = price + increment
     if(this.isWinning) {
       this.sniperListener.sniperWinning()
     } else {
-      this.sniperListener.sniperBidding()
+      this.sniperListener.sniperBidding({ itemId: this.itemId, lastPrice: price,  lastBid: bid})
     }
     this.auction.bid(price + increment)
   }

@@ -1,6 +1,8 @@
+import { SniperState } from ".";
+
 export interface SniperListener {
   sniperLost(): void
-  sniperBidding(): void
+  sniperBidding(state: SniperState): void
   sniperWinning(): void
   sniperWon(): void
 }

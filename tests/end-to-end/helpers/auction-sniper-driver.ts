@@ -11,14 +11,25 @@ export default class AuctionSniperDriver {
   }
 
   async showsSniperStatus(status: AuctionStatus) {
+    await this.waitSelectorWithInnerText('tbody tr', status)
+  }
+
+  async showsSniperState(itemId: string, lastPrice: number, lastBid: number, status: AuctionStatus) {
+    const innerText = [itemId, lastPrice, lastBid, status].join('\t')
+    await this.waitSelectorWithInnerText('tbody tr', innerText)
+  }
+
+  private async waitSelectorWithInnerText(selector: string, innerText: string) {
     try {
       await page.waitForFunction(
-        `document.querySelector("#status-label").innerText.includes("${status}")`,
+        `document.querySelector("${selector}")?.innerText.includes("${innerText}")`,
         { timeout: TIMEOUT }
       )
-    } catch {}
-    const label = await page.waitForSelector('#status-label')
-    const value = await label.evaluate(el => el.textContent)
-    expect(value).toEqual(status)
+    } catch {
+      const error = `Timeout: Selector '${selector}' with inner text '${innerText}' not found.`
+      console.error(error)
+      const value = await page.waitForFunction(`document.querySelector("${selector}")?.innerText`).then(e => e.jsonValue<string>())
+      expect(value).toEqual(innerText)
+    }
   }
 }

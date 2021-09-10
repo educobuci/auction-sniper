@@ -1,25 +1,34 @@
 import { useCallback, useEffect, useState } from 'react'
 import { PusherAuction, AuctionEventTranslator, setEventTranslator, subscribeToChannel } from 'library/pusher'
 import { AuctionSniper, AuctionStatus } from 'library/core'
-import SniperStateDisplayer from 'library/presentation/sniper-state-displayer'
+import SniperStateDisplayer, { SniperUI } from 'library/presentation/sniper-state-displayer'
+import SniperTable, { SniperTableProps } from 'components/SniperTable'
 
 export default function Home({ itemId, sniperId }: { itemId: string, sniperId: string }) {
-  const [status, setStatus] = useState(AuctionStatus.Joining)
+  const initalState = { id: itemId, lastPrice: '0', lastBid: '0', status: AuctionStatus.Joining }
+  const [tableModel, setTableModel] = useState<SniperTableProps>({ rows: [{ ...initalState }] })
 
   const joinAuction = useCallback(async () => {
     const channel = await subscribeToChannel(`private-${itemId}`)
     const auction = new PusherAuction(channel)
-    const displayer = new SniperStateDisplayer({ showStatus: setStatus })
-    const sniper = new AuctionSniper(auction, displayer)
+    const ui: SniperUI = {
+      showStatus: (status) => setTableModel({ rows: [{ ...tableModel.rows[0], status }] }),
+      showStatusChanged: (state, status) =>
+        setTableModel({ rows: [{ id: itemId, lastPrice: `${state.lastPrice}`, lastBid: `${state.lastBid}`, status }] })
+    }
+    const displayer = new SniperStateDisplayer(ui)
+    const sniper = new AuctionSniper(itemId, auction, displayer)
     setEventTranslator(new AuctionEventTranslator(sniperId, sniper))
     auction.join()
   }, [itemId, sniperId])
 
   useEffect(() => { joinAuction() }, [ joinAuction ])
 
-  return <div className="h-screen dark:bg-gray-900 dark:text-white p-4">
+  return <div className="h-screen dark:bg-gray-800 dark:text-white p-4">
     <h1 className="text-3xl">Auction Sniper: { itemId }</h1>
-    <div id="status-label">{ status }</div>
+    <div>
+      <SniperTable rows={ tableModel.rows } />
+    </div>
   </div>
 }
 

@@ -7,15 +7,16 @@ import config from './config'
 export default class ApplicationRunner {
   static readonly SNIPER_ID = 'sniper'
   private driver: AuctionSniperDriver
+  private itemId: string
 
   constructor() {
     this.driver = new AuctionSniperDriver(page)
   }
   
   async startBiddingIn(auction: FakeAuctionServer) {
+    this.itemId = auction.getItemId()
     page.on('console', (message) => console.log(message?.text()))
-    const itemId = auction.getItemId()
-    const url = `${config.host}/?item-id=${itemId}&sniper-id=${ApplicationRunner.SNIPER_ID}`
+    const url = `${config.host}/?item-id=${this.itemId}&sniper-id=${ApplicationRunner.SNIPER_ID}`
     page.goto(url)
     await this.driver.showsSniperStatus(AuctionStatus.Joining)
   }
@@ -28,12 +29,16 @@ export default class ApplicationRunner {
     await this.driver.showsSniperStatus(AuctionStatus.Bidding)
   }
 
-  async hasShownSniperIsWinning() {
-    await this.driver.showsSniperStatus(AuctionStatus.Winning)
+  async hasShownSniperIsBidding(lastPrice: number, lastBid: number) {
+    await this.driver.showsSniperState(this.itemId, lastPrice, lastBid, AuctionStatus.Bidding)
   }
 
-  async showsSniperHasWonAuction() {
-    await this.driver.showsSniperStatus(AuctionStatus.Won)
+  async hasShownSniperIsWinning(winninBid: number) {
+    await this.driver.showsSniperState(this.itemId, winninBid, winninBid, AuctionStatus.Winning)
+  }
+
+  async showsSniperHasWonAuction(lastPrice: number) {
+    await this.driver.showsSniperState(this.itemId, lastPrice, lastPrice, AuctionStatus.Won)
   }
 
   async stop() {

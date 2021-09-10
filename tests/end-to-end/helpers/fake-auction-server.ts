@@ -52,6 +52,7 @@ export default class FakeAuctionServer {
   }
 
   stop() {
+    this.channel?.unsubscribe()
     this.channel?.unbind_all()
     this.channel?.disconnect()
     this.pusher.disconnect()
