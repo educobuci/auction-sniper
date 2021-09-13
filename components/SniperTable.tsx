@@ -24,7 +24,7 @@ const SniperTable: FC<SniperTableProps> = ({ rows }) =>
         <TableHeadCell>Item</TableHeadCell>
         <TableHeadCell>Last Price</TableHeadCell>
         <TableHeadCell>Last Bid</TableHeadCell>
-        <TableHeadCell>Status</TableHeadCell>
+        <TableHeadCell>State</TableHeadCell>
       </tr>
     </thead>
     <tbody>

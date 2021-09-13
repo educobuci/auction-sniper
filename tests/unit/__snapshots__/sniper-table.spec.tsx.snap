@@ -22,7 +22,7 @@ exports[`Sniper table should set sniper values in columns [SNAPSHOT] 1`] = `
       <th
         className="border border-gray-300 dark:border-gray-500 px-2 py-1"
       >
-        Status
+        State
       </th>
     </tr>
   </thead>

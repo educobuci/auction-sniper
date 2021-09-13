@@ -17,16 +17,15 @@ describe('Auction sniper', () => {
 
   it('should report lost when auction closes immediately', () => {
     sniper.auctionClosed()
-    expect(sniperListener.sniperLost).toHaveBeenCalledTimes(1)
+    const snapshot = SniperSnapshot.joining(ITEM_ID).lost()
+    expect(sniperListener.sniperStateChanged).toHaveBeenCalledWith(snapshot)
   })
 
   it('should bid higher and report bidding when new price arrives', () => {
     const price = 1001
     const increment = 25
     const bid = price + increment
-
-    const snapshot: SniperSnapshot = { itemId: ITEM_ID, lastPrice: price, lastBid: bid, state: SniperState.Bidding }
-    
+    const snapshot = new SniperSnapshot(ITEM_ID, price, bid, SniperState.Bidding)
     sniper.currentPrice(price, increment, PriceSource.FromOtherBidder)
     expect(auction.bid).toHaveBeenCalledTimes(1)
     expect(auction.bid).toHaveBeenCalledWith(price + increment)
@@ -38,25 +37,40 @@ describe('Auction sniper', () => {
     sniperListener.sniperStateChanged.mockImplementationOnce((snapshot) => {
       expect(snapshot.state).toEqual(SniperState.Bidding)
       sniperState = 'bidding'
+    }).mockImplementationOnce(snapshot => {
+      expect(snapshot.state).toEqual(SniperState.Lost)
+      expect(sniperState).toEqual('bidding')
     })
-    sniperListener.sniperLost.mockImplementationOnce(() => expect(sniperState).toEqual('bidding'))
     sniper.currentPrice(123, 45, PriceSource.FromOtherBidder)
     sniper.auctionClosed()
-    expect(sniperListener.sniperLost).toHaveBeenCalled()
+    expect(sniperListener.sniperStateChanged).toHaveBeenCalled()
   })
 
   it('should report winning when current price comes from sniper', () => {
-    sniper.currentPrice(123, 45, PriceSource.FromSniper)
-    expect(sniperListener.sniperWinning).toHaveBeenCalledTimes(1)
+    var sniperState = null
+    sniperListener.sniperStateChanged.mockImplementationOnce((snapshot) => {
+      expect(snapshot.state).toEqual(SniperState.Bidding)
+      sniperState = 'bidding'
+    }).mockImplementationOnce(snapshot => {
+      expect(snapshot).toEqual(new SniperSnapshot(ITEM_ID, 135, 135, SniperState.Winning))
+      expect(snapshot.state).toEqual(SniperState.Winning)
+    })
+    sniper.currentPrice(123, 12, PriceSource.FromOtherBidder)
+    sniper.currentPrice(135, 45, PriceSource.FromSniper)
+    expect(sniperListener.sniperStateChanged).toHaveBeenCalledTimes(2)
   })
 
   it('should report won if auction closes when winning', () => {
     var sniperState = null
-    sniperListener.sniperWinning.mockImplementationOnce(() => sniperState = 'winning')
-    sniperListener.sniperWon.mockImplementationOnce(() => expect(sniperState).toEqual('winning'))
+    sniperListener.sniperStateChanged
+      .mockImplementationOnce(() => sniperState = 'winning')
+      .mockImplementationOnce(snapshot => {
+        expect(sniperState).toEqual('winning')
+        expect(snapshot.state).toEqual(SniperState.Won)
+      })
     sniper.currentPrice(123, 45, PriceSource.FromSniper)
     sniper.auctionClosed()
-    expect(sniperListener.sniperWon).toHaveBeenCalled()
+    expect(sniperListener.sniperStateChanged).toHaveBeenCalled()
   })
 })
 

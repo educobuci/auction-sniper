@@ -1,34 +1,41 @@
 import { Auction, AuctionEventListener, PriceSource } from './'
 import { SniperListener, SniperState } from './ports'
+import { SniperSnapshot } from './sniper-snapshot'
 
 export class AuctionSniper implements AuctionEventListener {
   private auction: Auction
   private sniperListener: SniperListener
   private isWinning = false
-  private itemId: string
+  private snapshot: SniperSnapshot
 
   constructor(itemId: string, auction: Auction, listener: SniperListener) {
     this.auction = auction
     this.sniperListener = listener
-    this.itemId = itemId
+    this.snapshot = SniperSnapshot.joining(itemId)
   }
 
   currentPrice(price: number, increment: number, source: PriceSource): void {
     this.isWinning = source === PriceSource.FromSniper
-    const bid = price + increment
     if(this.isWinning) {
-      this.sniperListener.sniperWinning()
+      this.snapshot = this.snapshot.winning(price)
     } else {
-      this.sniperListener.sniperStateChanged({ itemId: this.itemId, lastPrice: price,  lastBid: bid, state: SniperState.Bidding})
+      const bid = price + increment
+      this.snapshot = this.snapshot.bidding(price, bid)
     }
+    this.notifyChange()
     this.auction.bid(price + increment)
   }
 
   auctionClosed() {
     if(this.isWinning) {
-      this.sniperListener.sniperWon()
+      this.snapshot = this.snapshot.won()
     } else {
-      this.sniperListener.sniperLost()
+      this.snapshot = this.snapshot.lost()
     }
+    this.notifyChange()
+  }
+
+  private notifyChange(): void {
+    this.sniperListener.sniperStateChanged(this.snapshot)
   }
 }

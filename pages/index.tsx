@@ -12,7 +12,6 @@ export default function Home({ itemId, sniperId }: { itemId: string, sniperId: s
     const channel = await subscribeToChannel(`private-${itemId}`)
     const auction = new PusherAuction(channel)
     const ui: SniperUI = {
-      showStatus: (state) => setTableModel({ rows: [{ ...tableModel.rows[0], state }] }),
       showStatusChanged: ({ lastPrice, lastBid, state }) =>
         setTableModel({ rows: [{ id: itemId, lastPrice: `${lastPrice}`, lastBid: `${lastBid}`, state }] })
     }
