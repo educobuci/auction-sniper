@@ -18,6 +18,7 @@ export default class ApplicationRunner {
     page.on('console', (message) => console.log(message?.text()))
     const url = `${config.host}/?item-id=${this.itemId}&sniper-id=${ApplicationRunner.SNIPER_ID}`
     page.goto(url)
+    await this.driver.hasColumnTitles()
     await this.driver.showsSniperStatus(SniperState.Joining)
   }
 

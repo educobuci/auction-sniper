@@ -19,6 +19,11 @@ export default class AuctionSniperDriver {
     await this.waitSelectorWithInnerText('tbody tr', innerText)
   }
 
+  async hasColumnTitles() {
+    const columns = ['Item', 'Last Price', 'Last Bid', 'State'].join('\t')
+    await this.waitSelectorWithInnerText('thead tr', columns)
+  }
+
   private async waitSelectorWithInnerText(selector: string, innerText: string) {
     try {
       await page.waitForFunction(
