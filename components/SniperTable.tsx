@@ -12,10 +12,10 @@ export type SniperTableProps = {
 }
 
 const TableCell = ({ children }) =>
-  <td className="border border-gray-300 px-2 py-1">{children}</td>
+  <td className="border border-gray-300 dark:border-gray-500 px-2 py-1">{children}</td>
 
 const TableHeadCell = ({ children }) =>
-  <th className="border border-gray-300 px-2 py-1">{children}</th>
+  <th className="border border-gray-300 dark:border-gray-500 px-2 py-1">{children}</th>
 
 const SniperTable: FC<SniperTableProps> = ({ rows }) =>
   <table>
