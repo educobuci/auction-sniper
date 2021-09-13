@@ -7,5 +7,5 @@ module.exports = {
   ...puppeteerPreset,
   displayName: `${name} End-to-End`,
   name,
-  testRegex: "/end-to-end/.*\\.(test|spec)\\.ts$",
+  testRegex: "/end-to-end/.*\\.(test|spec)\\.ts[x]?$",
 }

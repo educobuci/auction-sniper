@@ -48,8 +48,8 @@ test('Sniper wins auction by bidding higher', async () => {
   auction.reportPrice(1098, 98, ApplicationRunner.SNIPER_ID)
   await application.hasShownSniperIsWinning(1098)
 
-  // auction.announceClosed()
-  // await application.showsSniperHasWonAuction(1098)
+  auction.announceClosed()
+  await application.showsSniperHasWonAuction(1098)
 })
 
 afterEach(async () => {

@@ -7,4 +7,8 @@ module.exports = {
   ...puppeteerPreset,
   displayName: name,
   name,
+  testEnvironment: 'jsdom',
+  transform: {
+    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
+  }
 }

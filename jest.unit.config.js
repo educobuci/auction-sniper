@@ -5,5 +5,9 @@ module.exports = {
   ...tsPreset,
   displayName: `${name} Unit`,
   name,
-  testRegex: "/unit/.*\\.(test|spec)\\.ts$",
+  testRegex: "/unit/.*\\.(test|spec)\\.ts[x]?$",
+  testEnvironment: 'jsdom',
+  transform: {
+    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
+  }
 }
