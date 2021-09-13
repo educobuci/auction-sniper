@@ -1,6 +1,6 @@
 import { mock, MockProxy } from 'jest-mock-extended'
 import { Auction } from '../../library/core/auction'
-import { AuctionSniper, SniperListener, PriceSource, SniperState } from '../../library/core'
+import { AuctionSniper, SniperListener, PriceSource, SniperSnapshot, SniperState } from '../../library/core'
 
 describe('Auction sniper', () => {
   const ITEM_ID = 'item-321'
@@ -25,17 +25,20 @@ describe('Auction sniper', () => {
     const increment = 25
     const bid = price + increment
 
-    const state: SniperState = { itemId: ITEM_ID, lastPrice: price, lastBid: bid }
+    const snapshot: SniperSnapshot = { itemId: ITEM_ID, lastPrice: price, lastBid: bid, state: SniperState.Bidding }
     
     sniper.currentPrice(price, increment, PriceSource.FromOtherBidder)
     expect(auction.bid).toHaveBeenCalledTimes(1)
     expect(auction.bid).toHaveBeenCalledWith(price + increment)
-    expect(sniperListener.sniperBidding).toHaveBeenCalledWith(state)
+    expect(sniperListener.sniperStateChanged).toHaveBeenCalledWith(snapshot)
   })
 
   it('should report lost if auction closes when bidding', () => {
     var sniperState = null
-    sniperListener.sniperBidding.mockImplementationOnce(() => sniperState = 'bidding')
+    sniperListener.sniperStateChanged.mockImplementationOnce((snapshot) => {
+      expect(snapshot.state).toEqual(SniperState.Bidding)
+      sniperState = 'bidding'
+    })
     sniperListener.sniperLost.mockImplementationOnce(() => expect(sniperState).toEqual('bidding'))
     sniper.currentPrice(123, 45, PriceSource.FromOtherBidder)
     sniper.auctionClosed()

@@ -1,20 +1,20 @@
 import { useCallback, useEffect, useState } from 'react'
 import { PusherAuction, AuctionEventTranslator, setEventTranslator, subscribeToChannel } from 'library/pusher'
-import { AuctionSniper, AuctionStatus } from 'library/core'
+import { AuctionSniper, SniperState } from 'library/core'
 import SniperStateDisplayer, { SniperUI } from 'library/presentation/sniper-state-displayer'
 import SniperTable, { SniperTableProps } from 'components/SniperTable'
 
 export default function Home({ itemId, sniperId }: { itemId: string, sniperId: string }) {
-  const initalState = { id: itemId, lastPrice: '0', lastBid: '0', status: AuctionStatus.Joining }
+  const initalState = { id: itemId, lastPrice: '0', lastBid: '0', state: SniperState.Joining }
   const [tableModel, setTableModel] = useState<SniperTableProps>({ rows: [{ ...initalState }] })
 
   const joinAuction = useCallback(async () => {
     const channel = await subscribeToChannel(`private-${itemId}`)
     const auction = new PusherAuction(channel)
     const ui: SniperUI = {
-      showStatus: (status) => setTableModel({ rows: [{ ...tableModel.rows[0], status }] }),
-      showStatusChanged: (state, status) =>
-        setTableModel({ rows: [{ id: itemId, lastPrice: `${state.lastPrice}`, lastBid: `${state.lastBid}`, status }] })
+      showStatus: (state) => setTableModel({ rows: [{ ...tableModel.rows[0], state }] }),
+      showStatusChanged: ({ lastPrice, lastBid, state }) =>
+        setTableModel({ rows: [{ id: itemId, lastPrice: `${lastPrice}`, lastBid: `${lastBid}`, state }] })
     }
     const displayer = new SniperStateDisplayer(ui)
     const sniper = new AuctionSniper(itemId, auction, displayer)

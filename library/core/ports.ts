@@ -1,8 +1,8 @@
-import { SniperState } from ".";
+import { SniperSnapshot } from '.'
 
 export interface SniperListener {
   sniperLost(): void
-  sniperBidding(state: SniperState): void
+  sniperStateChanged(snapshot: SniperSnapshot): void
   sniperWinning(): void
   sniperWon(): void
 }
@@ -17,7 +17,7 @@ export enum PriceSource {
   FromOtherBidder,
 }
 
-export enum AuctionStatus {
+export enum SniperState {
   Joining = 'Joining',
   Lost = 'Lost',
   Bidding = 'Bidding',

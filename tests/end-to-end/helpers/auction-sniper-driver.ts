@@ -1,4 +1,4 @@
-import { AuctionStatus } from 'library/core'
+import { SniperState } from 'library/core'
 import { Page } from 'puppeteer'
 
 const TIMEOUT = 3000
@@ -10,12 +10,12 @@ export default class AuctionSniperDriver {
     this.appPage = appPage
   }
 
-  async showsSniperStatus(status: AuctionStatus) {
-    await this.waitSelectorWithInnerText('tbody tr', status)
+  async showsSniperStatus(state: SniperState) {
+    await this.waitSelectorWithInnerText('tbody tr', state)
   }
 
-  async showsSniperState(itemId: string, lastPrice: number, lastBid: number, status: AuctionStatus) {
-    const innerText = [itemId, lastPrice, lastBid, status].join('\t')
+  async showsSniperState(itemId: string, lastPrice: number, lastBid: number, state: SniperState) {
+    const innerText = [itemId, lastPrice, lastBid, state].join('\t')
     await this.waitSelectorWithInnerText('tbody tr', innerText)
   }
 

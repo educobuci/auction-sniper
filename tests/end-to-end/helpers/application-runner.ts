@@ -1,5 +1,5 @@
 import 'expect-puppeteer'
-import { AuctionStatus } from '../../../library/core'
+import { SniperState } from '../../../library/core'
 import AuctionSniperDriver from './auction-sniper-driver'
 import FakeAuctionServer from './fake-auction-server'
 import config from './config'
@@ -18,27 +18,27 @@ export default class ApplicationRunner {
     page.on('console', (message) => console.log(message?.text()))
     const url = `${config.host}/?item-id=${this.itemId}&sniper-id=${ApplicationRunner.SNIPER_ID}`
     page.goto(url)
-    await this.driver.showsSniperStatus(AuctionStatus.Joining)
+    await this.driver.showsSniperStatus(SniperState.Joining)
   }
 
   async showsSniperHasLostAuction() {
-    await this.driver.showsSniperStatus(AuctionStatus.Lost)
+    await this.driver.showsSniperStatus(SniperState.Lost)
   }
 
   async hasShownIsBidding() {
-    await this.driver.showsSniperStatus(AuctionStatus.Bidding)
+    await this.driver.showsSniperStatus(SniperState.Bidding)
   }
 
   async hasShownSniperIsBidding(lastPrice: number, lastBid: number) {
-    await this.driver.showsSniperState(this.itemId, lastPrice, lastBid, AuctionStatus.Bidding)
+    await this.driver.showsSniperState(this.itemId, lastPrice, lastBid, SniperState.Bidding)
   }
 
   async hasShownSniperIsWinning(winninBid: number) {
-    await this.driver.showsSniperState(this.itemId, winninBid, winninBid, AuctionStatus.Winning)
+    await this.driver.showsSniperState(this.itemId, winninBid, winninBid, SniperState.Winning)
   }
 
   async showsSniperHasWonAuction(lastPrice: number) {
-    await this.driver.showsSniperState(this.itemId, lastPrice, lastPrice, AuctionStatus.Won)
+    await this.driver.showsSniperState(this.itemId, lastPrice, lastPrice, SniperState.Won)
   }
 
   async stop() {

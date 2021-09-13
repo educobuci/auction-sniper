@@ -1,4 +1,4 @@
-import { AuctionStatus, SniperListener, SniperState } from '../core'
+import { SniperSnapshot, SniperListener, SniperState } from '../core'
 
 export default class SniperStateDisplayer implements SniperListener {
   ui: SniperUI
@@ -8,23 +8,23 @@ export default class SniperStateDisplayer implements SniperListener {
   }
 
   sniperWon(): void {
-    this.ui.showStatus(AuctionStatus.Won)
+    this.ui.showStatus(SniperState.Won)
   }
 
   sniperLost(): void {
-    this.ui.showStatus(AuctionStatus.Lost)
+    this.ui.showStatus(SniperState.Lost)
   }
 
-  sniperBidding(state: SniperState): void {
-    this.ui.showStatusChanged(state, AuctionStatus.Bidding)
+  sniperStateChanged(snapshot: SniperSnapshot): void {
+    this.ui.showStatusChanged(snapshot)
   }
 
   sniperWinning(): void {
-    this.ui.showStatus(AuctionStatus.Winning)
+    this.ui.showStatus(SniperState.Winning)
   }
 }
 
 export interface SniperUI {
-  showStatus(status: AuctionStatus): void
-  showStatusChanged(state: SniperState, status: AuctionStatus): void
+  showStatus(state: SniperState): void
+  showStatusChanged(snapshot: SniperSnapshot): void
 }

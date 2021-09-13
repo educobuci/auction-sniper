@@ -4,7 +4,7 @@ export type SniperTableRow = {
   id: string
   lastPrice: string
   lastBid: string
-  status: string
+  state: string
 }
 
 export type SniperTableProps = {
@@ -28,12 +28,12 @@ const SniperTable: FC<SniperTableProps> = ({ rows }) =>
       </tr>
     </thead>
     <tbody>
-      { rows.map(({ id, lastPrice, lastBid, status }) => 
+      { rows.map(({ id, lastPrice, lastBid, state }) => 
         <tr key={id}>
           <TableCell>{id}</TableCell>
           <TableCell>{lastPrice}</TableCell>
           <TableCell>{lastBid}</TableCell>
-          <TableCell>{status}</TableCell>
+          <TableCell>{state}</TableCell>
         </tr>
       )}
     </tbody>

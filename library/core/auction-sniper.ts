@@ -1,5 +1,5 @@
 import { Auction, AuctionEventListener, PriceSource } from './'
-import { SniperListener } from './ports'
+import { SniperListener, SniperState } from './ports'
 
 export class AuctionSniper implements AuctionEventListener {
   private auction: Auction
@@ -19,7 +19,7 @@ export class AuctionSniper implements AuctionEventListener {
     if(this.isWinning) {
       this.sniperListener.sniperWinning()
     } else {
-      this.sniperListener.sniperBidding({ itemId: this.itemId, lastPrice: price,  lastBid: bid})
+      this.sniperListener.sniperStateChanged({ itemId: this.itemId, lastPrice: price,  lastBid: bid, state: SniperState.Bidding})
     }
     this.auction.bid(price + increment)
   }
