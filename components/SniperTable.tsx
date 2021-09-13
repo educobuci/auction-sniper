@@ -11,23 +11,29 @@ export type SniperTableProps = {
   rows: SniperTableRow[]
 }
 
+const TableCell = ({ children }) =>
+  <td className="border border-gray-300 px-2 py-1">{children}</td>
+
+const TableHeadCell = ({ children }) =>
+  <th className="border border-gray-300 px-2 py-1">{children}</th>
+
 const SniperTable: FC<SniperTableProps> = ({ rows }) =>
-  <table className="sniper-table" cellSpacing="0">
+  <table>
     <thead>
       <tr>
-        <th>Item</th>
-        <th>Last Price</th>
-        <th>Last Bid</th>
-        <th>Status</th>
+        <TableHeadCell>Item</TableHeadCell>
+        <TableHeadCell>Last Price</TableHeadCell>
+        <TableHeadCell>Last Bid</TableHeadCell>
+        <TableHeadCell>Status</TableHeadCell>
       </tr>
     </thead>
     <tbody>
       { rows.map(({ id, lastPrice, lastBid, status }) => 
         <tr key={id}>
-          <td>{id}</td>
-          <td>{lastPrice}</td>
-          <td>{lastBid}</td>
-          <td>{status}</td>
+          <TableCell>{id}</TableCell>
+          <TableCell>{lastPrice}</TableCell>
+          <TableCell>{lastBid}</TableCell>
+          <TableCell>{status}</TableCell>
         </tr>
       )}
     </tbody>
