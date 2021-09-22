@@ -9,14 +9,12 @@ const PUSHER_SUBSCRIPTION_SUCCEEDED = 'pusher:subscription_succeeded'
 const EVENT_TIMEOUT = 3000
 
 export default class FakeAuctionServer {
-  itemId: string
-  pusher: Pusher
-  channel: Channel
-  messages: Array<any>
+  private itemId: string
+  private pusher: Pusher
+  private channel: Channel
 
   constructor(itemId: string) {
     this.itemId = itemId
-    this.messages = []
     Pusher.logToConsole = false
     this.pusher = new Pusher(PUSHER_KEY, {
       authEndpoint: PUSHER_AUTH_ENDPOINT,
@@ -62,7 +60,7 @@ export default class FakeAuctionServer {
     const value = await new Promise<any>((resolve, reject) => {
       const timeout = setTimeout(() => {
         this.channel.unbind(name)
-        reject(`Timeout: '${name}' event has not been received`)
+        reject(`Timeout: '${name}' event has not been received for auction ${this.itemId}`)
       }, EVENT_TIMEOUT)
       this.channel.bind(name, (data: any) => {
         this.channel.unbind(name)

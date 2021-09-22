@@ -6,18 +6,15 @@ const pusherApiKey = process.env.NEXT_PUBLIC_PUSHER_APP_KEY
 const SUBSCRIBED = 'pusher:subscription_succeeded'
 const AUTH_ENDPOINT = '/api/pusher/auth'
 
-let translator: AuctionEventTranslator = null
+Pusher.logToConsole = false
 
-export const setEventTranslator = async (eventTranslator: AuctionEventTranslator) => {
-  translator = eventTranslator
-}
+const pusher = new Pusher(pusherApiKey, {
+  authEndpoint: AUTH_ENDPOINT,
+  cluster: config.cluster
+})
 
-export const subscribeToChannel = (channelName: string, ) => {
-  Pusher.logToConsole = false
-  const pusher = new Pusher(pusherApiKey, {
-    authEndpoint: AUTH_ENDPOINT,
-    cluster: config.cluster
-  })
+
+export const subscribeToChannel = (channelName: string) => {
   const channel = pusher.subscribe(channelName)
   return new Promise<Channel>(res => {
     channel.bind_global((name: string, data: any) => {
@@ -25,7 +22,7 @@ export const subscribeToChannel = (channelName: string, ) => {
         res(channel)
       }
       if(name.startsWith('client-')) {
-        translator?.processEvent(name, data)
+        (channel['translator'] as AuctionEventTranslator)?.processEvent(name, data)
       }
     })
   })

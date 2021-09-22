@@ -1,5 +1,5 @@
 import { Auction, AuctionEventListener, PriceSource } from './'
-import { SniperListener, SniperState } from './ports'
+import { SniperListener } from './ports'
 import { SniperSnapshot } from './sniper-snapshot'
 
 export class AuctionSniper implements AuctionEventListener {

@@ -11,7 +11,7 @@ export default class AuctionSniperDriver {
   }
 
   async showsSniperStatus(state: SniperState) {
-    await this.waitSelectorWithInnerText('tbody tr', state)
+    await this.waitSelectorWithInnerText('tbody td', state)
   }
 
   async showsSniperState(itemId: string, lastPrice: number, lastBid: number, state: SniperState) {
@@ -25,16 +25,12 @@ export default class AuctionSniperDriver {
   }
 
   private async waitSelectorWithInnerText(selector: string, innerText: string) {
+    const selectorCode = `Array.from(document.querySelectorAll('${selector}').values())`
     try {
-      await page.waitForFunction(
-        `document.querySelector("${selector}")?.innerText.includes("${innerText}")`,
-        { timeout: TIMEOUT }
-      )
+      await page.waitForFunction(`${selectorCode}.some(el => el.innerText === '${innerText}')`, { timeout: TIMEOUT })
     } catch {
-      const error = `Timeout: Selector '${selector}' with inner text '${innerText}' not found.`
-      console.error(error)
-      const value = await page.waitForFunction(`document.querySelector("${selector}")?.innerText`).then(e => e.jsonValue<string>())
-      expect(value).toEqual(innerText)
+      const value = await page.waitForFunction(`${selectorCode}.map(el => el.innerText)`).then(e => e.jsonValue<string>())
+      expect(value).toContain(innerText)
     }
   }
 }

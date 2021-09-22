@@ -7,19 +7,20 @@ import config from './config'
 export default class ApplicationRunner {
   static readonly SNIPER_ID = 'sniper'
   private driver: AuctionSniperDriver
-  private itemId: string
 
   constructor() {
     this.driver = new AuctionSniperDriver(page)
   }
   
-  async startBiddingIn(auction: FakeAuctionServer) {
-    this.itemId = auction.getItemId()
+  async startBiddingIn(... auctions: FakeAuctionServer[]) {
+    const items = auctions.map(a => `items=${a.getItemId()}`).join('&')
+    const url = `${config.host}/?${items}&sniper-id=${ApplicationRunner.SNIPER_ID}`
     page.on('console', (message) => console.log(message?.text()))
-    const url = `${config.host}/?item-id=${this.itemId}&sniper-id=${ApplicationRunner.SNIPER_ID}`
     page.goto(url)
     await this.driver.hasColumnTitles()
-    await this.driver.showsSniperStatus(SniperState.Joining)
+    for(const auction of auctions) {
+      await this.driver.showsSniperState(auction.getItemId(), 0, 0, SniperState.Joining)
+    }
   }
 
   async showsSniperHasLostAuction() {
@@ -30,16 +31,16 @@ export default class ApplicationRunner {
     await this.driver.showsSniperStatus(SniperState.Bidding)
   }
 
-  async hasShownSniperIsBidding(lastPrice: number, lastBid: number) {
-    await this.driver.showsSniperState(this.itemId, lastPrice, lastBid, SniperState.Bidding)
+  async hasShownSniperIsBidding(auction: FakeAuctionServer, lastPrice: number, lastBid: number) {
+    await this.driver.showsSniperState(auction.getItemId(), lastPrice, lastBid, SniperState.Bidding)
   }
 
-  async hasShownSniperIsWinning(winninBid: number) {
-    await this.driver.showsSniperState(this.itemId, winninBid, winninBid, SniperState.Winning)
+  async hasShownSniperIsWinning(auction: FakeAuctionServer, winninBid: number) {
+    await this.driver.showsSniperState(auction.getItemId(), winninBid, winninBid, SniperState.Winning)
   }
 
-  async showsSniperHasWonAuction(lastPrice: number) {
-    await this.driver.showsSniperState(this.itemId, lastPrice, lastPrice, SniperState.Won)
+  async showsSniperHasWonAuction(auction: FakeAuctionServer, lastPrice: number) {
+    await this.driver.showsSniperState(auction.getItemId(), lastPrice, lastPrice, SniperState.Won)
   }
 
   async stop() {
