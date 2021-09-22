@@ -54,7 +54,7 @@ test('Sniper wins auction by bidding higher', async () => {
   await application.showsSniperHasWonAuction(auction, 1098)
 })
 
-test.only('Sniper bids for multiple items', async () => {
+test('Sniper bids for multiple items', async () => {
   await auction.startSellingItem()
   await auction2.startSellingItem()
 
