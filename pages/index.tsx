@@ -1,34 +1,37 @@
-import { useCallback, useEffect, useReducer, useState } from 'react'
 import  Head from 'next/head'
-import { PusherAuction, AuctionEventTranslator, subscribeToChannel } from 'library/pusher'
-import { AuctionSniper, SniperListener, SniperSnapshot, SniperState } from 'library/core'
-import SniperTable, { SniperTableProps, SniperTableRow } from 'components/SniperTable'
+import { useCallback, useEffect, useReducer } from 'react'
+import { PusherAuction, AuctionEventTranslator, PusherClient } from 'library/pusher'
+import { AuctionSniper, SniperListener, SniperSnapshot } from 'library/core'
+import SniperTable, { SniperTableProps } from 'components/SniperTable'
 
-const reducer = (state: SniperTableProps, action: { type: string, snapshot: SniperSnapshot}) => {
+const reducer = (state: SniperSnapshot[], action: { type: string, snapshot: SniperSnapshot}) => {
   switch(action.type) {
     case 'update':
-      const { itemId, lastPrice, lastBid, state: itemState } = action.snapshot
-      const index = state.rows.findIndex(i => i.id === itemId)
-      const row: SniperTableRow = { id: itemId, lastPrice: `${lastPrice}`, lastBid: `${lastBid}`, state: itemState }
-      let rows = [...state.rows]
-      rows.splice(index, 1, row)
-      return { rows }
+      const index = state.findIndex(i => i.itemId === action.snapshot.itemId)
+      let newState = [...state]
+      newState.splice(index, 1, action.snapshot)
+      return newState
   }
 }
 
 export default function Home({ items, sniperId }: { items: string[], sniperId: string }) {
-  const initialState = { rows: items.map(id => ({ id: id, lastPrice: '0', lastBid: '0', state: SniperState.Joining }))}
-  const [tableState, dispatch] = useReducer(reducer, initialState)
+  const initialState = items.map(SniperSnapshot.joining)
+  const [state, dispatch] = useReducer(reducer, initialState)
+
+  const table: SniperTableProps = { rows: state.map(({ itemId, lastPrice, lastBid, state }) => {
+    return { id: itemId, lastPrice: `${lastPrice}`, lastBid: `${lastBid}`, state }
+  })}
 
   const joinAuction = useCallback(async () => {
+    const client = new PusherClient()
     const sniperListener: SniperListener = {
       sniperStateChanged: (snapshot) => { dispatch({ type: 'update', snapshot: snapshot }) }
     }
     for(const item of items) {
-      const channel = await subscribeToChannel(`private-${item}`)
+      const channel = await client.subscribe(`private-${item}`)
       const auction = new PusherAuction(channel)
       const sniper = new AuctionSniper(item, auction, sniperListener)
-      channel['translator'] = new AuctionEventTranslator(sniperId, sniper)
+      PusherClient.setTranslator(channel, new AuctionEventTranslator(sniperId, sniper))
       auction.join()
     }
   }, [items, sniperId])
@@ -41,7 +44,7 @@ export default function Home({ items, sniperId }: { items: string[], sniperId: s
     </Head>
     <h1 className="text-3xl">Auction Sniper: { items }</h1>
     <div>
-      <SniperTable rows={ tableState.rows } />
+      <SniperTable { ...table } />
     </div>
   </div>
 }
