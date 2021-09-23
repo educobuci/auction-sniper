@@ -17,8 +17,8 @@ export class PusherClient {
     })
   }
 
-  subscribe(channelName: string): Promise<Channel> {
-    const channel = this.pusher.subscribe(channelName)
+  subscribe(item: string): Promise<Channel> {
+    const channel = this.pusher.subscribe(`private-${item}`)
     return new Promise<Channel>(res => {
       channel.bind_global((name: string, data: any) => {
         if(name === SUBSCRIBED) {
